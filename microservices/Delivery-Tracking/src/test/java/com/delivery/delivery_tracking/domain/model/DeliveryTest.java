@@ -2,12 +2,14 @@ package com.delivery.delivery_tracking.domain.model;
 
 import com.delivery.delivery_tracking.domain.model.exception.DomainException;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class DeliveryTest {
 
     @Test
