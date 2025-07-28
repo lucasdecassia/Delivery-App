@@ -1,5 +1,7 @@
 package com.delivery.courier.management.domain.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.*;
 
 import java.time.OffsetDateTime;
@@ -12,7 +14,10 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Setter(AccessLevel.PRIVATE)
+@Entity
 public class Courier {
+
+    @Id
     @EqualsAndHashCode.Include
     private UUID id;
 

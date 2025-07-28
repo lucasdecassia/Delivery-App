@@ -1,7 +1,9 @@
 package com.delivery.delivery_tracking.domain.model;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import lombok.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
@@ -11,7 +13,7 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Setter(AccessLevel.PRIVATE)
 @Getter
-@EntityScan
+@Entity
 public class Item {
 
     @Id
@@ -23,7 +25,7 @@ public class Item {
     @Setter(AccessLevel.PACKAGE)
     private Integer quantity;
 
-    @ManyToMany
+    @ManyToOne(optional = false)
     @Getter(AccessLevel.PRIVATE)
     private Delivery delivery;
 
