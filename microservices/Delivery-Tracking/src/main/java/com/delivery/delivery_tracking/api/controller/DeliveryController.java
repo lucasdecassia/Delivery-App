@@ -62,5 +62,4 @@ public class DeliveryController {
     public void complete(@PathVariable UUID deliveryId){
         checkpointService.complete(deliveryId);
     }
-
 }

@@ -10,6 +10,5 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 public class CourierPayoutModel {
-
     private BigDecimal payoutFee;
 }

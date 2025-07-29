@@ -17,19 +17,22 @@ public class DeliveryCheckpointService {
     private final DeliveryRepository repo;
 
     public void place(UUID deliveryId){
-        Delivery delivery = repo.findById(deliveryId).orElseThrow(() -> new DomainException());
+        Delivery delivery = repo.findById(deliveryId)
+                .orElseThrow(() -> new DomainException());
         delivery.place();
         repo.saveAndFlush(delivery);
     }
 
     public void pickup(UUID deliveryId, UUID courierId){
-        Delivery delivery = repo.findById(deliveryId).orElseThrow(() -> new DomainException());
+        Delivery delivery = repo.findById(deliveryId)
+                .orElseThrow(() -> new DomainException());
         delivery.pickUp(courierId);
         repo.saveAndFlush(delivery);
     }
 
     public void complete(UUID deliveryId){
-        Delivery delivery = repo.findById(deliveryId).orElseThrow(() -> new DomainException());
+        Delivery delivery = repo.findById(deliveryId)
+                .orElseThrow(() -> new DomainException());
         delivery.markAsDelivery();
         repo.saveAndFlush(delivery);
     }

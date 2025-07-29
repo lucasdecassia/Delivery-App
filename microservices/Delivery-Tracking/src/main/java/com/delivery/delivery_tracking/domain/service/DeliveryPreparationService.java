@@ -26,7 +26,6 @@ public class DeliveryPreparationService {
 
     @Transactional
     public Delivery draft(DeliveryInput input){
-
         Delivery delivery = Delivery.draft();
         handlePreparation(input, delivery);
         return deliveryRepository.saveAndFlush(delivery);
@@ -65,7 +64,7 @@ public class DeliveryPreparationService {
                 .build();
 
         DeliveryEstimate estimate = deliveryTimeEstimationService.estimate(sender, recipient);
-        BigDecimal calculatePayout = courierPayoutCalculationService.calculatePayout(estimate.getDistanceKM());
+        BigDecimal calculatedPayout = courierPayoutCalculationService.calculatePayout(estimate.getDistanceKM());
 
         BigDecimal distanceFee = calculateFee(estimate.getDistanceKM());
 
@@ -73,7 +72,7 @@ public class DeliveryPreparationService {
                 .recipient(recipient)
                 .sender(sender)
                 .expectedDeliveryTime(estimate.getEstimatedTime())
-                .courierPayout(calculatePayout)
+                .courierPayout(calculatedPayout)
                 .distanceFee(distanceFee)
                 .build();
 

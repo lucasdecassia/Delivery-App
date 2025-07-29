@@ -14,8 +14,8 @@ public class CourierPayoutCalculationServiceHttpImpl implements CourierPayoutCal
 
     @Override
     public BigDecimal calculatePayout(Double distanceKM) {
-        var courierPayoutModel = courierAPIClient.calculatePayout(
-                new CourierPayoutCalculateInput(distanceKM));
+        var courierPayoutModel = courierAPIClient.payoutCalculation(
+                new CourierPayoutCalculationInput(distanceKM));
         return courierPayoutModel.getPayoutFee();
     }
 }

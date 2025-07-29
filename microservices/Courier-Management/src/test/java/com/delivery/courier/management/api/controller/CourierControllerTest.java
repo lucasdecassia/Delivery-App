@@ -1,21 +1,28 @@
 package com.delivery.courier.management.api.controller;
 
+import com.delivery.courier.management.domain.model.Courier;
+import com.delivery.courier.management.domain.repository.CourierRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.UUID;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CourierControllerTest {
 
     @LocalServerPort
     private int port;
+
+    @Autowired
+    private CourierRepository courierRepository;
 
     @BeforeEach
     void setUp() {
@@ -44,5 +51,24 @@ class CourierControllerTest {
                 .body("name", Matchers.equalTo("Lucas"));
 
     }
+
+    @Test
+   public void shouldReturn2000() {
+        UUID courierld = courierRepository.saveAndFlush(
+                Courier.brandNew( "Maria Souza","11912341234")).getId();
+
+        RestAssured
+                .given()
+                .pathParam("courierId", courierld)
+                .accept(ContentType.JSON)
+                .when()
+                .get("/{courierId}")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("id", Matchers.equalTo(courierld.toString()))
+                .body("name", Matchers.equalTo("Maria Souza"))
+                .body("phone", Matchers.equalTo("11912341234"));
+    }
+
 
 }

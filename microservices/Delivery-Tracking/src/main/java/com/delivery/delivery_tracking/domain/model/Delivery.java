@@ -1,8 +1,12 @@
 package com.delivery.delivery_tracking.domain.model;
 
+import com.delivery.delivery_tracking.domain.event.DeliveryFulFIlledEvent;
+import com.delivery.delivery_tracking.domain.event.DeliveryPickedUpEvent;
+import com.delivery.delivery_tracking.domain.event.DeliveryPlacedEvent;
 import com.delivery.delivery_tracking.domain.exception.DomainException;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -14,11 +18,11 @@ import java.util.UUID;
 
 
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Setter(AccessLevel.PRIVATE)
 @Getter
 @Entity
-public class Delivery {
+public class Delivery extends AbstractAggregateRoot<Delivery> {
 
     @Id
     @EqualsAndHashCode.Exclude
@@ -64,7 +68,7 @@ public class Delivery {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "delivery")
     private List<Item> items = new ArrayList<>();
 
-    public static Delivery draft(){
+    public static Delivery  draft(){
         Delivery delivery = new Delivery();
         delivery.setId(UUID.randomUUID());
         delivery.setStatus(DeliveryStatus.DRAFT);
@@ -115,17 +119,20 @@ public class Delivery {
         verifyIfCanBePlaced();
         this.changeStatusTo(DeliveryStatus.WAITING_FOR_COURIER);
         this.setPlacedAt(OffsetDateTime.now());
+        super.registerEvent(new DeliveryPlacedEvent(OffsetDateTime.now(), this.getId()));
     }
 
     public void pickUp(UUID courierId){
         this.setCourierId(courierId);
         this.changeStatusTo(DeliveryStatus.IN_TRANSIT);
         this.setAssignedAt(OffsetDateTime.now());
+        super.registerEvent(new DeliveryPickedUpEvent(OffsetDateTime.now(), this.getId()));
     }
 
     public void markAsDelivery(){
         this.changeStatusTo(DeliveryStatus.DELIVERED);
         this.setFulfilledAt(OffsetDateTime.now());
+        super.registerEvent(new DeliveryFulFIlledEvent(this.getFulfilledAt(), this.getId()));
     }
 
     public List<Item> getItems() {
