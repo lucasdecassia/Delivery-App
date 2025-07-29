@@ -1,8 +1,11 @@
 package com.delivery.courier.management.api.controller;
 
 import com.delivery.courier.management.api.model.CourierInput;
+import com.delivery.courier.management.api.model.CourierPayoutCalculateInput;
+import com.delivery.courier.management.api.model.CourierPayoutModel;
 import com.delivery.courier.management.domain.model.Courier;
 import com.delivery.courier.management.domain.repository.CourierRepository;
+import com.delivery.courier.management.domain.service.CourierPayoutService;
 import com.delivery.courier.management.domain.service.CourierRegistrationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @RequestMapping("/api/v1/couriers")
@@ -20,6 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CourierController {
 
+    private final CourierPayoutService courierPayoutService;
     private final CourierRegistrationService service;
     private final CourierRepository repo;
 
@@ -42,6 +47,12 @@ public class CourierController {
     @GetMapping("/{courierId}")
     public Courier findById(@PathVariable UUID courierId){
         return repo.findById(courierId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @PostMapping("/payout-calculation")
+    public CourierPayoutModel calculate(@RequestBody CourierPayoutCalculateInput input){
+        BigDecimal payoutFee = courierPayoutService.calculate(input.getDistanceKM());
+        return new CourierPayoutModel(payoutFee);
     }
 
 }
