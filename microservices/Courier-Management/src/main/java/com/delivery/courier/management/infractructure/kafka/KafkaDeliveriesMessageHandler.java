@@ -1,5 +1,6 @@
 package com.delivery.courier.management.infractructure.kafka;
 
+import com.delivery.courier.management.domain.service.CourierDeliveryService;
 import com.delivery.courier.management.infractructure.event.DeliveryFulFilledIntegrationEvent;
 import com.delivery.courier.management.infractructure.event.DeliveryPlacedIntegrationEvent;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,8 @@ groupId = "courier-management")
 @Slf4j
 public class KafkaDeliveriesMessageHandler {
 
+    private final CourierDeliveryService service;
+
     @KafkaHandler(isDefault = true)
     public void defaultHandler(@Payload Object object){
         log.info("default handler: {}", object);
@@ -25,10 +28,12 @@ public class KafkaDeliveriesMessageHandler {
     @KafkaHandler
     public void  handle(@Payload DeliveryPlacedIntegrationEvent event){
         log.info("handle: {}", event);
+        service.assined(event.getDeliveryId());
     }
 
     @KafkaHandler
     public void handleFulFilled(@Payload DeliveryFulFilledIntegrationEvent event){
         log.info("handle: {}", event);
+        service.fulfilled(event.getDeliveryId());
     }
 }
