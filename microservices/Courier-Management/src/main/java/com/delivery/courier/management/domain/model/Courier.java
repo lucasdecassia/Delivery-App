@@ -1,7 +1,9 @@
 package com.delivery.courier.management.domain.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.*;
 
 import java.time.OffsetDateTime;
@@ -33,6 +35,7 @@ public class Courier {
 
     private OffsetDateTime lastFulfilledDeliveryAt;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "courier")
     private List<AssignedDelivery> pendingDeliveries = new ArrayList<>();
 
     public List<AssignedDelivery> getPendingDeliveries(){
@@ -51,7 +54,7 @@ public class Courier {
 
     public void assign(UUID deliveryId){
         this.pendingDeliveries.add(
-                AssignedDelivery.pending(deliveryId)
+                AssignedDelivery.pending(deliveryId, this)
         );
         this.pendingDeliverieQuantity++;
     }

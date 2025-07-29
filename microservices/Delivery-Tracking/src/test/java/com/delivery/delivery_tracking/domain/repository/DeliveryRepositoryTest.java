@@ -1,39 +1,40 @@
-package com.delivery.delivery_tracking.domain.model;
+package com.delivery.delivery_tracking.domain.repository;
 
-import com.delivery.delivery_tracking.domain.exception.DomainException;
+import com.delivery.delivery_tracking.domain.model.ContactPoint;
+import com.delivery.delivery_tracking.domain.model.Delivery;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-class DeliveryTest {
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class DeliveryRepositoryTest {
+
+    @Autowired
+    private DeliveryRepository repo;
 
     @Test
-    public void shoulChangeToPlaced(){
+    public void shouldPersist(){
         Delivery delivery  = Delivery.draft();
 
         delivery.editPreparationDetails(createdValidPreparationDetails());
 
+        delivery.addItem("Camputador", 2);
+        delivery.addItem("Mouse", 2);
+
+        repo.saveAndFlush(delivery);
+
+        Delivery persistedDelivery = repo.findById(delivery.getId()).orElseThrow();
+
+        assertEquals(2, persistedDelivery.getItems().size());
+
         delivery.place();
-
-        assertEquals(DeliveryStatus.WAITING_FOR_COURIER, delivery.getStatus());
-        assertNotNull(delivery.getPlacedAt());
-    }
-
-    @Test
-    public void shouldNotPlaced(){
-        Delivery delivery  = Delivery.draft();
-        assertThrows(DomainException.class, () -> {
-            delivery.place();
-        });
-
-        assertEquals(DeliveryStatus.DRAFT, delivery.getStatus());
-        assertNull(delivery.getPlacedAt());
-
     }
 
     public Delivery.PreparationDetails createdValidPreparationDetails(){
@@ -64,4 +65,5 @@ class DeliveryTest {
                 .expectedDeliveryTime(Duration.ofHours(4))
                 .build();
     }
+
 }

@@ -1,6 +1,6 @@
 package com.delivery.delivery_tracking.domain.model;
 
-import com.delivery.delivery_tracking.domain.model.exception.DomainException;
+import com.delivery.delivery_tracking.domain.exception.DomainException;
 import jakarta.persistence.*;
 import lombok.*;
 
